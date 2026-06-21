@@ -5,19 +5,37 @@ const routes = [
     path: '/',
     name: 'Home',
     component: () => import('../views/HomeView.vue'),
-    meta: { title: 'Hablando de TO — Podcast y plataforma de Terapia Ocupacional' }
+    meta: { title: 'Hablando de TO — Podcast de Terapia Ocupacional' }
   },
   {
     path: '/podcast',
     name: 'Podcast',
     component: () => import('../views/PodcastView.vue'),
-    meta: { title: 'Podcast — Hablando de TO' }
+    meta: { title: 'Episodios — Hablando de TO' }
   },
   {
     path: '/podcast/:id',
     name: 'Episode',
     component: () => import('../views/EpisodeView.vue'),
     meta: { title: 'Episodio — Hablando de TO' }
+  },
+  {
+    path: '/youtube',
+    name: 'YouTube',
+    component: () => import('../views/YouTubeView.vue'),
+    meta: { title: 'YouTube — Hablando de TO' }
+  },
+  {
+    path: '/sobre',
+    name: 'About',
+    component: () => import('../views/AboutView.vue'),
+    meta: { title: 'Sobre el proyecto — Hablando de TO' }
+  },
+  {
+    path: '/metricas',
+    name: 'Metrics',
+    component: () => import('../views/MetricsView.vue'),
+    meta: { title: 'Métricas — Hablando de TO' }
   },
   {
     path: '/invitados',

@@ -9,12 +9,14 @@
       </router-view>
     </main>
     <AppFooter />
+    <ChatBot />
   </div>
 </template>
 
 <script setup>
 import AppHeader from './components/layout/AppHeader.vue'
 import AppFooter from './components/layout/AppFooter.vue'
+import ChatBot from './components/ChatBot.vue'
 </script>
 
 <style>
@@ -32,16 +34,16 @@ import AppFooter from './components/layout/AppFooter.vue'
 /* Page transitions */
 .page-enter-active,
 .page-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.28s ease;
 }
 
 .page-enter-from {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(10px);
 }
 
 .page-leave-to {
   opacity: 0;
-  transform: translateY(-12px);
+  transform: translateY(-10px);
 }
 </style>
