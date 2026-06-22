@@ -58,7 +58,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                 📺 Ver en YouTube
               </router-link>
-              <router-link to="/podcast" class="btn btn-ghost btn-lg">
+              <router-link to="/podcast" class="btn btn-ghost-visible btn-lg">
                 📚 Explorar contenidos
               </router-link>
             </div>
@@ -97,11 +97,11 @@
               <!-- Stats overlay -->
               <div class="podcast-art__stats">
                 <div class="art-stat">
-                  <span class="art-stat__num">+10K</span>
+                  <span class="art-stat__num">+11K</span>
                   <span class="art-stat__label">Visualizaciones</span>
                 </div>
                 <div class="art-stat art-stat--accent">
-                  <span class="art-stat__num">6+</span>
+                  <span class="art-stat__num">42+</span>
                   <span class="art-stat__label">Episodios</span>
                 </div>
                 <div class="art-stat">
@@ -109,16 +109,16 @@
                   <span class="art-stat__label">Plataformas</span>
                 </div>
               </div>
+            </div>
 
-              <!-- Floating badges -->
-              <div class="floating-badge floating-badge--spotify">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-                En Spotify
-              </div>
-              <div class="floating-badge floating-badge--youtube">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                En YouTube
-              </div>
+            <!-- Floating badges fuera del card para que no se recorten -->
+            <div class="floating-badge floating-badge--spotify">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+              En Spotify
+            </div>
+            <div class="floating-badge floating-badge--youtube">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              En YouTube
             </div>
           </div>
 
@@ -302,7 +302,14 @@
                 </a>
               </div>
               <div class="yt-videos-list">
-                <div v-for="ep in topYouTubeEpisodes" :key="ep.id" class="yt-video-item">
+                <a
+                  v-for="ep in topYouTubeEpisodes"
+                  :key="ep.id"
+                  :href="ep.youtubeUrl"
+                  target="_blank"
+                  rel="noopener"
+                  class="yt-video-item"
+                >
                   <div class="yt-video-thumb">
                     <img :src="ep.image" :alt="ep.title" loading="lazy" />
                     <div class="yt-play-icon">
@@ -311,9 +318,9 @@
                   </div>
                   <div class="yt-video-info">
                     <h5>{{ ep.title }}</h5>
-                    <span>{{ ep.views }} visualizaciones</span>
+                    <span>{{ ep.viewsLabel }} visualizaciones</span>
                   </div>
-                </div>
+                </a>
               </div>
             </div>
           </div>
@@ -456,20 +463,26 @@ const subscribed = ref(false)
 const form = ref({ name: '', email: '' })
 const activeFilter = ref('Todos')
 
-const quickFilters = ['Todos', 'Neurorehabilitación', 'Salud mental', 'Pediatría', 'Geriatría', 'Investigación']
+const quickFilters = ['Todos', 'Debate', 'Práctica clínica', 'Investigación', 'Experiencia vivida', 'Internacional']
 
 const displayedEpisodes = computed(() => {
-  if (activeFilter.value === 'Todos') return allEpisodes.value.slice(0, 3)
+  if (activeFilter.value === 'Todos') {
+    return allEpisodes.value.filter(ep => ep.featured).slice(0, 3)
+  }
   return allEpisodes.value
     .filter(ep => ep.category === activeFilter.value || ep.tags.includes(activeFilter.value))
     .slice(0, 3)
 })
 
-const topYouTubeEpisodes = computed(() => [
-  { ...allEpisodes.value[3], views: '11.200' },
-  { ...allEpisodes.value[1], views: '9.800' },
-  { ...allEpisodes.value[0], views: '8.400' },
-])
+const topYouTubeEpisodes = computed(() => {
+  return [...allEpisodes.value]
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 3)
+    .map(ep => ({
+      ...ep,
+      viewsLabel: ep.views ? ep.views.toLocaleString('es-ES') : ''
+    }))
+})
 
 function setFilter(cat) {
   activeFilter.value = cat
@@ -646,6 +659,27 @@ h1.hero__title {
   color: white;
 }
 
+.hero__actions .btn-ghost-visible {
+  color: rgba(255,255,255,0.85);
+  border: 2px solid rgba(255,255,255,0.35);
+  background: transparent;
+  border-radius: 9999px;
+  padding: 0.65rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition-base);
+  text-decoration: none;
+}
+.hero__actions .btn-ghost-visible:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.65);
+  color: white;
+  transform: translateY(-2px);
+}
+
 .hero__authority {
   display: flex;
   flex-wrap: wrap;
@@ -665,6 +699,7 @@ h1.hero__title {
 /* Podcast art */
 .hero__visual {
   animation: fadeIn 0.8s ease 0.3s both;
+  position: relative;
 }
 
 .hero__podcast-art {
@@ -674,7 +709,6 @@ h1.hero__title {
   border-radius: 24px;
   padding: 0;
   overflow: hidden;
-  position: relative;
 }
 
 .podcast-art__inner {
@@ -765,6 +799,16 @@ h1.hero__title {
   color: white;
   bottom: -14px;
   left: 24px;
+}
+
+/* Hace que los yt-video-item sean clickeables con enlace real */
+.yt-video-item a {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
 }
 
 /* ===== PLATFORMS STRIP ===== */

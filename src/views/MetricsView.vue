@@ -321,15 +321,16 @@ const maxPlays = computed(() => Math.max(...spotifyData.map(d => d.plays)))
 const avgPlays = computed(() => Math.round(spotifyData.reduce((s, d) => s + d.plays, 0) / spotifyData.length))
 const totalPlays = computed(() => spotifyData.reduce((s, d) => s + d.plays, 0))
 
-// YouTube ranking with watch hours
-const youtubeRanking = computed(() => [
-  { ...allEpisodes.value[3], views: 11200, watchHours: 680 },
-  { ...allEpisodes.value[1], views: 9800, watchHours: 590 },
-  { ...allEpisodes.value[0], views: 8400, watchHours: 510 },
-  { ...allEpisodes.value[5], views: 7200, watchHours: 420 },
-  { ...allEpisodes.value[2], views: 6100, watchHours: 355 },
-  { ...allEpisodes.value[4], views: 5300, watchHours: 310 },
-])
+// YouTube ranking: ordena por views del campo real y calcula horas de watch proporcionales
+const youtubeRanking = computed(() =>
+  [...allEpisodes.value]
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 6)
+    .map(ep => ({
+      ...ep,
+      watchHours: Math.round((ep.views || 0) * 0.061)
+    }))
+)
 
 const maxWatchHours = computed(() => Math.max(...youtubeRanking.value.map(e => e.watchHours)))
 

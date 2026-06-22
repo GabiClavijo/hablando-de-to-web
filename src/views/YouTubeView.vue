@@ -17,12 +17,12 @@
             </p>
             <div class="yt-hero__stats">
               <div class="yt-stat">
-                <span class="yt-stat__num">+10.000</span>
+                <span class="yt-stat__num">+11.500</span>
                 <span class="yt-stat__lbl">Visualizaciones</span>
               </div>
               <div class="yt-stat__sep"></div>
               <div class="yt-stat">
-                <span class="yt-stat__num">6+</span>
+                <span class="yt-stat__num">42+</span>
                 <span class="yt-stat__lbl">Episodios</span>
               </div>
               <div class="yt-stat__sep"></div>
@@ -67,7 +67,7 @@
                   <span>Suscriptores</span>
                 </div>
                 <div class="ch-stat">
-                  <strong>6</strong>
+                  <strong>42+</strong>
                   <span>Vídeos</span>
                 </div>
               </div>
@@ -95,13 +95,13 @@
           <div class="yt-featured__thumb">
             <img :src="topEpisode.image" :alt="topEpisode.title" loading="lazy" />
             <div class="yt-featured__overlay">
-              <a href="https://www.youtube.com/@Hablandode_to" target="_blank" rel="noopener" class="yt-play-big">
+              <a :href="topEpisode.youtubeUrl" target="_blank" rel="noopener" class="yt-play-big">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
               </a>
             </div>
             <div class="yt-featured__views">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              {{ topEpisode.views }} visualizaciones
+              {{ topEpisode.viewsLabel }} visualizaciones
             </div>
             <div class="yt-featured__badge">#1 Más visto</div>
           </div>
@@ -121,7 +121,7 @@
               <span v-for="tag in topEpisode.tags" :key="tag" class="tag">{{ tag }}</span>
             </div>
             <div class="yt-featured__actions">
-              <a href="https://www.youtube.com/@Hablandode_to" target="_blank" rel="noopener" class="btn-yt-primary">
+              <a :href="topEpisode.youtubeUrl" target="_blank" rel="noopener" class="btn-yt-primary">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 Ver en YouTube
               </a>
@@ -159,7 +159,7 @@
           <a
             v-for="ep in filteredEpisodes"
             :key="ep.id"
-            href="https://www.youtube.com/@Hablandode_to"
+            :href="ep.youtubeUrl"
             target="_blank"
             rel="noopener"
             class="yt-card card"
@@ -174,7 +174,7 @@
               <div class="yt-card__duration">{{ ep.duration }}</div>
               <div class="yt-card__views">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                {{ ep.views }}
+                {{ ep.viewsLabel }}
               </div>
             </div>
             <div class="yt-card__body">
@@ -245,19 +245,23 @@ const store = useEpisodesStore()
 const { allEpisodes } = storeToRefs(store)
 const activeFilter = ref('Todos')
 
-const filters = ['Todos', 'Entrevista', 'Debate', 'Mesa redonda']
+const filters = ['Todos', 'Entrevista', 'Debate']
 
-const viewsCounts = { 1: '8.400', 2: '9.800', 3: '6.100', 4: '11.200', 5: '5.300', 6: '7.200' }
-
-const episodesWithViews = computed(() =>
-  allEpisodes.value.map(ep => ({ ...ep, views: viewsCounts[ep.id] || '5.000' }))
+// Ordena por views (campo real en episodes.js) de mayor a menor
+const episodesSortedByViews = computed(() =>
+  [...allEpisodes.value]
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .map(ep => ({
+      ...ep,
+      viewsLabel: ep.views ? ep.views.toLocaleString('es-ES') : ''
+    }))
 )
 
-const topEpisode = computed(() => episodesWithViews.value.find(ep => ep.id === 4))
+const topEpisode = computed(() => episodesSortedByViews.value[0])
 
 const filteredEpisodes = computed(() => {
-  if (activeFilter.value === 'Todos') return episodesWithViews.value
-  return episodesWithViews.value.filter(ep => ep.format === activeFilter.value)
+  if (activeFilter.value === 'Todos') return episodesSortedByViews.value
+  return episodesSortedByViews.value.filter(ep => ep.format === activeFilter.value)
 })
 </script>
 
