@@ -139,7 +139,16 @@
       <div class="container">
         <div class="section-header">
           <span class="section-header__label">Todos los vídeos</span>
-          <h2 class="section-header__title">Catálogo completo</h2>
+          <h2 class="section-header__title">
+            Catálogo completo
+            <span v-if="fromApi" class="yt-count-badge">{{ filteredEpisodes.length }} vídeos</span>
+          </h2>
+          <p v-if="apiLoading" class="section-header__subtitle" style="color: var(--color-primary)">
+            Cargando vídeos del canal…
+          </p>
+          <p v-else-if="fromApi" class="section-header__subtitle">
+            Todos los episodios del canal, actualizados automáticamente desde YouTube.
+          </p>
         </div>
 
         <!-- Filter bar -->
@@ -155,36 +164,49 @@
           </button>
         </div>
 
-        <div class="yt-grid">
+        <!-- Loading skeleton -->
+        <div v-if="apiLoading" class="yt-grid">
+          <div v-for="n in 6" :key="n" class="yt-card card yt-card--skeleton">
+            <div class="yt-card__thumb yt-skeleton"></div>
+            <div class="yt-card__body">
+              <div class="yt-skeleton yt-skeleton--line" style="width: 60%; height: 14px; margin-bottom: 8px"></div>
+              <div class="yt-skeleton yt-skeleton--line" style="width: 90%; height: 18px; margin-bottom: 6px"></div>
+              <div class="yt-skeleton yt-skeleton--line" style="width: 50%; height: 13px"></div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="yt-grid">
           <a
             v-for="ep in filteredEpisodes"
             :key="ep.id"
-            :href="ep.youtubeUrl"
+            :href="ep.url || ep.youtubeUrl"
             target="_blank"
             rel="noopener"
             class="yt-card card"
           >
             <div class="yt-card__thumb">
-              <img :src="ep.image" :alt="ep.title" loading="lazy" />
+              <img :src="ep.thumbnail || ep.image" :alt="ep.title" loading="lazy" />
               <div class="yt-card__play-overlay">
                 <div class="yt-card__play-btn">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
                 </div>
               </div>
-              <div class="yt-card__duration">{{ ep.duration }}</div>
-              <div class="yt-card__views">
+              <div v-if="ep.duration" class="yt-card__duration">{{ ep.duration }}</div>
+              <div v-if="ep.views" class="yt-card__views">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 {{ ep.viewsLabel }}
               </div>
             </div>
             <div class="yt-card__body">
               <div class="yt-card__meta">
-                <span class="badge badge-primary">{{ ep.category }}</span>
-                <span class="yt-card__ep">Ep. {{ ep.number }}</span>
+                <span v-if="ep.category" class="badge badge-primary">{{ ep.category }}</span>
+                <span v-if="ep.number" class="yt-card__ep">Ep. {{ ep.number }}</span>
+                <span v-else-if="ep.publishedLabel" class="yt-card__ep">{{ ep.publishedLabel }}</span>
               </div>
               <h4>{{ ep.title }}</h4>
-              <p class="yt-card__guest">{{ ep.guest }}</p>
-              <div class="yt-card__tags">
+              <p v-if="ep.guest" class="yt-card__guest">{{ ep.guest }}</p>
+              <div v-if="ep.tags?.length" class="yt-card__tags">
                 <span v-for="tag in ep.tags.slice(0, 2)" :key="tag" class="tag" style="font-size: 0.72rem; padding: 2px 8px">{{ tag }}</span>
               </div>
             </div>
@@ -240,28 +262,53 @@
 import { ref, computed } from 'vue'
 import { useEpisodesStore } from '../stores/episodes'
 import { storeToRefs } from 'pinia'
+import { useAllVideos } from '../composables/useAllVideos'
 
 const store = useEpisodesStore()
 const { allEpisodes } = storeToRefs(store)
 const activeFilter = ref('Todos')
 
-const filters = ['Todos', 'Entrevista', 'Debate']
+const { videos: apiVideos, loading: apiLoading, fromApi } = useAllVideos()
 
-// Ordena por views (campo real en episodes.js) de mayor a menor
-const episodesSortedByViews = computed(() =>
-  [...allEpisodes.value]
+const filters = ['Todos', 'Más vistos', 'Más recientes']
+
+// Top episode always from store (has full metadata: guest, category, summary)
+const topEpisode = computed(() => {
+  const sorted = [...allEpisodes.value].sort((a, b) => (b.views || 0) - (a.views || 0))
+  const ep = sorted[0]
+  return ep ? { ...ep, viewsLabel: ep.views ? ep.views.toLocaleString('es-ES') : '' } : null
+})
+
+// All videos display: API data if available, otherwise fallback to store episodes
+const allVideosDisplay = computed(() => {
+  if (fromApi.value && apiVideos.value.length) {
+    return apiVideos.value
+  }
+  return [...allEpisodes.value]
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .map(ep => ({
-      ...ep,
-      viewsLabel: ep.views ? ep.views.toLocaleString('es-ES') : ''
+      id: ep.youtubeId || ep.id,
+      title: ep.title,
+      thumbnail: ep.image,
+      publishedAt: ep.date,
+      publishedLabel: ep.date,
+      views: ep.views || 0,
+      viewsLabel: ep.views ? ep.views.toLocaleString('es-ES') : '',
+      duration: ep.duration,
+      url: ep.youtubeUrl,
+      // Store-only fields for richer display
+      category: ep.category,
+      number: ep.number,
+      guest: ep.guest,
+      tags: ep.tags || [],
     }))
-)
-
-const topEpisode = computed(() => episodesSortedByViews.value[0])
+})
 
 const filteredEpisodes = computed(() => {
-  if (activeFilter.value === 'Todos') return episodesSortedByViews.value
-  return episodesSortedByViews.value.filter(ep => ep.format === activeFilter.value)
+  const list = allVideosDisplay.value
+  if (activeFilter.value === 'Más vistos') return [...list].sort((a, b) => b.views - a.views)
+  if (activeFilter.value === 'Más recientes') return [...list].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
+  return list
 })
 </script>
 
@@ -713,6 +760,42 @@ const filteredEpisodes = computed(() => {
 .section-footer {
   text-align: center;
   margin-top: 2.5rem;
+}
+
+/* Count badge next to title */
+.yt-count-badge {
+  display: inline-block;
+  background: #FF0000;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  vertical-align: middle;
+  margin-left: 0.75rem;
+  letter-spacing: 0.03em;
+}
+
+/* Skeleton loader */
+.yt-skeleton {
+  background: linear-gradient(90deg, var(--color-bg-alt) 25%, var(--color-border) 50%, var(--color-bg-alt) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.yt-skeleton.yt-card__thumb {
+  aspect-ratio: 16/9;
+  width: 100%;
+}
+
+.yt-skeleton--line {
+  border-radius: 6px;
+  display: block;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* ===== ALT PLATFORM ===== */

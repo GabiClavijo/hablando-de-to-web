@@ -325,24 +325,24 @@ const timeline = [
     desc: 'Jorge Clavijo detecta la ausencia de un podcast de referencia en Terapia Ocupacional en español y decide crearlo.'
   },
   {
-    date: 'Inicio 2024',
-    title: 'Primeros pasos',
-    desc: 'Se graban los primeros episodios, se diseña el formato de entrevista extensa y se elige el nombre: Hablando de TO.'
+    date: 'Verano 2024',
+    title: 'Preparación y diseño',
+    desc: 'Se diseña el formato de entrevista extensa, se elige el nombre Hablando de TO y se graban los primeros episodios.'
   },
   {
-    date: 'Enero 2024',
-    title: 'Episodio 1: DCA',
-    desc: 'Se publica el primer episodio sobre Terapia Ocupacional en el Daño Cerebral Adquirido, con excelente acogida.'
+    date: 'Septiembre 2024',
+    title: 'Episodio 1: TO en colegios',
+    desc: 'Se publica el primer episodio del podcast, centrado en el papel del terapeuta ocupacional en el ámbito educativo, marcando el inicio del proyecto Hablando de TO.'
   },
   {
-    date: 'Febrero–Abril 2024',
+    date: 'Otoño–Invierno 2024',
     title: 'Expansión temática',
-    desc: 'Episodios sobre conducción, salud mental, pediatría e investigación consolidan el podcast como referente.'
+    desc: 'Episodios sobre cuidados paliativos, salud mental, oncología e investigación consolidan el podcast como referente hispanohablante.'
   },
   {
     date: 'Junio 2026',
-    title: '+10.000 visualizaciones',
-    desc: 'El episodio de pediatría supera las 10.000 visualizaciones en YouTube. La comunidad crece exponencialmente.'
+    title: '+11.000 visualizaciones',
+    desc: 'El episodio sobre sexualidad y TO supera las 11.000 visualizaciones en YouTube. La comunidad sigue creciendo.'
   }
 ]
 </script>
@@ -562,7 +562,7 @@ const timeline = [
 /* ===== HOST BIO ===== */
 .host-bio {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 340px 1fr;
   gap: 4rem;
   align-items: start;
 }
@@ -576,11 +576,12 @@ const timeline = [
 
 .host-bio__avatar {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 280px;
+  height: 280px;
   border-radius: 50%;
   overflow: hidden;
-  border: 4px solid var(--color-primary-light);
+  border: 5px solid var(--color-primary-light);
+  box-shadow: 0 8px 40px rgba(114,148,149,0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -848,7 +849,8 @@ const timeline = [
   .mission-content { grid-template-columns: 1fr; }
   .values-grid { grid-template-columns: repeat(2, 1fr); }
   .host-bio { grid-template-columns: 1fr; }
-  .host-bio__visual { flex-direction: row; justify-content: flex-start; }
+  .host-bio__visual { flex-direction: row; justify-content: flex-start; align-items: flex-start; }
+  .host-bio__avatar { width: 200px; height: 200px; }
   .audiences-grid { grid-template-columns: repeat(2, 1fr); }
 }
 

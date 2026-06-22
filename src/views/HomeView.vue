@@ -23,7 +23,16 @@
               Podcast · Terapia Ocupacional · Divulgación
             </div>
 
-            <h1 class="hero__title">Hablando de TO</h1>
+            <div class="hero__title-row">
+              <img
+                v-if="!heroLogoError"
+                :src="'/logo.png'"
+                alt="Logo Hablando de TO"
+                class="hero__title-logo"
+                @error="heroLogoError = true"
+              />
+              <h1 class="hero__title">Hablando de TO</h1>
+            </div>
 
             <p class="hero__subtitle">
               Un podcast de referencia en Terapia Ocupacional que da voz a la profesión,
@@ -471,6 +480,7 @@ const { allEpisodes } = storeToRefs(store)
 const subscribed = ref(false)
 const form = ref({ name: '', email: '' })
 const activeFilter = ref('Todos')
+const heroLogoError = ref(false)
 
 const quickFilters = ['Todos', 'Debate', 'Práctica clínica', 'Investigación', 'Experiencia vivida', 'Internacional']
 
@@ -641,14 +651,31 @@ const listeningPlatforms = [
   color: var(--color-accent-light);
 }
 
+.hero__title-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  animation: fadeInUp 0.7s ease 0.1s both;
+}
+
+.hero__title-logo {
+  width: 76px;
+  height: 76px;
+  border-radius: 18px;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.25);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+  flex-shrink: 0;
+}
+
 h1.hero__title {
   font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 900;
   line-height: 1;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
   color: white;
   letter-spacing: -0.02em;
-  animation: fadeInUp 0.7s ease 0.1s both;
 }
 
 .hero__subtitle {
