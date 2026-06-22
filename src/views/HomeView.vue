@@ -85,13 +85,7 @@
             <div class="hero__podcast-art">
               <div class="podcast-art__inner">
                 <div class="podcast-art__logo">
-                  <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-                    <circle cx="40" cy="40" r="40" fill="rgba(255,255,255,0.12)"/>
-                    <path d="M22 54 Q30 26 40 40 Q50 54 58 26" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round" fill="none"/>
-                    <circle cx="40" cy="40" r="6" fill="white"/>
-                    <circle cx="40" cy="40" r="12" stroke="white" stroke-width="1.5" fill="none" opacity="0.4"/>
-                    <circle cx="40" cy="40" r="20" stroke="white" stroke-width="1" fill="none" opacity="0.2"/>
-                  </svg>
+                  <img :src="'/logo.png'" alt="Hablando de TO" class="podcast-art__logo-img" />
                 </div>
                 <h2>Hablando de TO</h2>
                 <p>Podcast de Terapia Ocupacional</p>
@@ -813,6 +807,14 @@ h1.hero__title {
 
 .podcast-art__logo {
   margin-bottom: 0.5rem;
+}
+
+.podcast-art__logo-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+  object-fit: cover;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
 .podcast-art__inner h2 {
