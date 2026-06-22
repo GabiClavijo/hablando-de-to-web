@@ -105,41 +105,68 @@
       </div>
     </div>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" :class="{ open: menuOpen }">
-      <nav class="mobile-nav">
-        <router-link to="/" class="mobile-nav__link" @click="closeMenu">
-          <span>🏠</span> Inicio
-        </router-link>
-        <router-link to="/podcast" class="mobile-nav__link" @click="closeMenu">
-          <span>🎙️</span> Episodios
-        </router-link>
-        <router-link to="/youtube" class="mobile-nav__link" @click="closeMenu">
-          <span>📺</span> YouTube
-        </router-link>
-        <router-link to="/sobre" class="mobile-nav__link" @click="closeMenu">
-          <span>ℹ️</span> Sobre el proyecto
-        </router-link>
-        <router-link to="/metricas" class="mobile-nav__link" @click="closeMenu">
-          <span>📊</span> Métricas
-        </router-link>
-        <router-link to="/invitados" class="mobile-nav__link" @click="closeMenu">
-          <span>👥</span> Invitados
-        </router-link>
-        <router-link to="/comunidad" class="mobile-nav__link" @click="closeMenu">
-          <span>🤝</span> Comunidad
-        </router-link>
-        <router-link to="/evidencia" class="mobile-nav__link" @click="closeMenu">
-          <span>🔬</span> Evidencia
-        </router-link>
-        <router-link to="/recursos" class="mobile-nav__link" @click="closeMenu">
-          <span>📚</span> Recursos
-        </router-link>
-      </nav>
-      <div class="mobile-platforms">
-        <a href="https://open.spotify.com/show/686Q2N3yZtX36SqEzRbFCB?si=6416d9d4e80d4824" target="_blank" rel="noopener" class="platform-tag platform-spotify" @click="closeMenu">Spotify</a>
-        <a href="https://www.youtube.com/@Hablandode_to" target="_blank" rel="noopener" class="platform-tag platform-youtube" @click="closeMenu">YouTube</a>
-        <a href="https://podcasts.apple.com/us/podcast" target="_blank" rel="noopener" class="platform-tag platform-apple" @click="closeMenu">Apple</a>
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu" :class="{ open: menuOpen }" @click.self="closeMenu">
+      <div class="mobile-menu__panel">
+
+        <nav class="mobile-nav">
+          <router-link to="/" class="mobile-nav__link" @click="closeMenu">
+            <span class="mnl-icon">🏠</span>
+            <span class="mnl-text">Inicio</span>
+          </router-link>
+          <router-link to="/podcast" class="mobile-nav__link" @click="closeMenu">
+            <span class="mnl-icon">🎙️</span>
+            <span class="mnl-text">Episodios</span>
+          </router-link>
+          <router-link to="/youtube" class="mobile-nav__link mobile-nav__link--yt" @click="closeMenu">
+            <span class="mnl-icon">📺</span>
+            <span class="mnl-text">YouTube</span>
+          </router-link>
+          <router-link to="/sobre" class="mobile-nav__link" @click="closeMenu">
+            <span class="mnl-icon">🎙️</span>
+            <span class="mnl-text">Sobre el proyecto</span>
+          </router-link>
+          <router-link to="/metricas" class="mobile-nav__link" @click="closeMenu">
+            <span class="mnl-icon">📊</span>
+            <span class="mnl-text">Métricas</span>
+          </router-link>
+          <router-link to="/invitados" class="mobile-nav__link" @click="closeMenu">
+            <span class="mnl-icon">👥</span>
+            <span class="mnl-text">Invitados</span>
+          </router-link>
+          <router-link to="/comunidad" class="mobile-nav__link" @click="closeMenu">
+            <span class="mnl-icon">🤝</span>
+            <span class="mnl-text">Comunidad</span>
+          </router-link>
+          <router-link to="/evidencia" class="mobile-nav__link" @click="closeMenu">
+            <span class="mnl-icon">🔬</span>
+            <span class="mnl-text">Evidencia científica</span>
+          </router-link>
+          <router-link to="/recursos" class="mobile-nav__link" @click="closeMenu">
+            <span class="mnl-icon">📚</span>
+            <span class="mnl-text">Recursos</span>
+          </router-link>
+        </nav>
+
+        <div class="mobile-divider"></div>
+
+        <div class="mobile-platforms-grid">
+          <a href="https://open.spotify.com/show/686Q2N3yZtX36SqEzRbFCB" target="_blank" rel="noopener" class="mobile-platform-btn mobile-platform-btn--spotify" @click="closeMenu">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            Spotify
+          </a>
+          <a href="https://www.youtube.com/@Hablandode_to" target="_blank" rel="noopener" class="mobile-platform-btn mobile-platform-btn--youtube" @click="closeMenu">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            YouTube
+          </a>
+          <a href="https://go.ivoox.com/sq/2734836" target="_blank" rel="noopener" class="mobile-platform-btn mobile-platform-btn--ivoox" @click="closeMenu">
+            iVoox
+          </a>
+          <a href="https://music.amazon.es/podcasts/469d8a1e-b568-4ea0-b85f-05e331a8e3ec/hablando-de-to" target="_blank" rel="noopener" class="mobile-platform-btn mobile-platform-btn--amazon" @click="closeMenu">
+            Amazon Music
+          </a>
+        </div>
+
       </div>
     </div>
   </header>
@@ -391,58 +418,114 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 .hamburger.active span:nth-child(2) { opacity: 0; }
 .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Mobile Menu */
+/* Mobile Menu — full-screen overlay */
 .mobile-menu {
-  display: none;
-  flex-direction: column;
-  padding: 1rem 1.5rem 1.5rem;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease;
+  z-index: 999;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  display: none;
 }
 
 .mobile-menu.open {
-  max-height: 600px;
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+.mobile-menu__panel {
+  padding: 1rem 1.25rem 2.5rem;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .mobile-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  margin-bottom: 1.25rem;
+  gap: 0.125rem;
 }
 
 .mobile-nav__link {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.7rem 0.875rem;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
   font-weight: 500;
-  font-size: 0.92rem;
+  font-size: 1rem;
   color: var(--color-text-secondary);
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast), color var(--transition-fast);
   text-decoration: none;
 }
 
-.mobile-nav__link:hover,
+.mnl-icon {
+  font-size: 1.2rem;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.mnl-text {
+  flex: 1;
+}
+
+.mobile-nav__link:active,
 .mobile-nav__link.router-link-active {
   background: var(--color-bg-alt);
   color: var(--color-primary-dark);
 }
 
-.mobile-platforms {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+.mobile-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 1rem 0;
 }
+
+.mobile-platforms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.625rem;
+}
+
+.mobile-platform-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  text-decoration: none;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.mobile-platform-btn:active {
+  opacity: 0.85;
+  transform: scale(0.97);
+}
+
+.mobile-platform-btn--spotify  { background: #1DB954; }
+.mobile-platform-btn--youtube  { background: #FF0000; }
+.mobile-platform-btn--ivoox    { background: #FF6600; }
+.mobile-platform-btn--amazon   { background: #FF9900; }
 
 @media (max-width: 1024px) {
   .header__nav { display: none; }
   .hamburger { display: flex; }
-  .mobile-menu { display: flex; }
+  .mobile-menu { display: block; }
   .header__actions .btn { display: none; }
   .header--open { background: var(--color-surface); }
 }
