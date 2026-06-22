@@ -5,7 +5,16 @@
       <!-- Logo -->
       <router-link to="/" class="header__logo" @click="closeMenu">
         <div class="logo-icon">
-          <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+          <img
+            v-if="!logoError"
+            :src="'/logo.png'"
+            alt="Hablando de TO"
+            width="38"
+            height="38"
+            class="logo-img"
+            @error="logoError = true"
+          />
+          <svg v-else width="38" height="38" viewBox="0 0 38 38" fill="none">
             <circle cx="19" cy="19" r="19" fill="var(--color-primary)"/>
             <path d="M11 26 Q15 12 19 19 Q23 26 27 12" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
             <circle cx="19" cy="19" r="3.5" fill="var(--color-accent)"/>
@@ -141,6 +150,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 
 const isScrolled = ref(false)
 const menuOpen = ref(false)
+const logoError = ref(false)
 
 function handleScroll() {
   isScrolled.value = window.scrollY > 20
@@ -194,6 +204,13 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   gap: 0.625rem;
   flex-shrink: 0;
   text-decoration: none;
+}
+
+.logo-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  object-fit: cover;
 }
 
 .logo-text {

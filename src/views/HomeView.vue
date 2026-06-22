@@ -127,24 +127,33 @@
     </section>
 
     <!-- ===== PLATAFORMAS ===== -->
-    <section class="platforms-strip">
+    <section class="platforms-section">
       <div class="container">
-        <p class="platforms-strip__label">Escucha Hablando de TO donde prefieras</p>
-        <div class="platforms-strip__list">
-          <a href="https://open.spotify.com/show/686Q2N3yZtX36SqEzRbFCB?si=6416d9d4e80d4824" target="_blank" rel="noopener" class="platform-tag platform-spotify">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-            Spotify
+        <div class="platforms-section__header">
+          <span class="section-header__label">Disponible en todas las plataformas</span>
+          <h2>Escucha donde quieras</h2>
+          <p>Hablando de TO está en las principales plataformas de podcast y vídeo. Sin cuentas, sin barreras, gratis.</p>
+        </div>
+        <div class="platforms-grid">
+          <a
+            v-for="p in listeningPlatforms"
+            :key="p.id"
+            :href="p.url"
+            target="_blank"
+            rel="noopener"
+            class="platform-card"
+            :style="{ '--pc': p.color, '--pc-bg': p.bg }"
+          >
+            <div class="platform-card__icon" v-html="p.svg"></div>
+            <div class="platform-card__body">
+              <h4>{{ p.name }}</h4>
+              <p>{{ p.desc }}</p>
+            </div>
+            <span class="platform-card__cta">
+              Escuchar
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
           </a>
-          <a href="https://www.youtube.com/@Hablandode_to" target="_blank" rel="noopener" class="platform-tag platform-youtube">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-            YouTube
-          </a>
-          <a href="https://podcasts.apple.com/us/podcast" target="_blank" rel="noopener" class="platform-tag platform-apple">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-            Apple Podcasts
-          </a>
-          <a href="https://music.amazon.es/podcasts" target="_blank" rel="noopener" class="platform-tag platform-amazon">Amazon Music</a>
-          <a href="https://go.ivoox.com/sq/2734836" target="_blank" rel="noopener" class="platform-tag platform-ivoox">iVoox</a>
         </div>
       </div>
     </section>
@@ -492,6 +501,60 @@ function subscribe() {
   subscribed.value = true
   form.value = { name: '', email: '' }
 }
+
+const spotifySvg = `<svg width="26" height="26" viewBox="0 0 24 24" fill="var(--pc,#1DB954)"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`
+const youtubeSvg = `<svg width="26" height="26" viewBox="0 0 24 24" fill="var(--pc,#FF0000)"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`
+const appleSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="var(--pc,#A855F7)"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>`
+const amazonSvg = `<svg width="26" height="26" viewBox="0 0 24 24" fill="var(--pc,#00A8E1)"><path d="M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.138-.06.234-.1.293-.13.226-.088.39-.046.525.13.12.174.09.336-.12.48-.256.19-.6.41-1.006.654-1.244.743-2.64 1.316-4.185 1.71a17.65 17.65 0 0 1-4.345.535 18.91 18.91 0 0 1-5.015-.68c-1.615-.446-3.15-1.116-4.607-2.016-.22-.14-.284-.295-.195-.458a.44.44 0 0 1 .078-.11zm.56-1.96c-.223-.304-.162-.455.16-.455.033 0 .09.01.162.03 2.02.516 3.97.775 5.85.775 2.38 0 4.666-.43 6.862-1.292l.274-.105c.136-.05.23-.08.28-.092.278-.09.475-.04.595.15.12.188.09.36-.09.513-.21.18-.47.35-.79.51-1.255.67-2.63 1.17-4.125 1.498a19.7 19.7 0 0 1-4.16.443c-1.77 0-3.576-.298-5.42-.9a.44.44 0 0 1-.24-.128.36.36 0 0 1-.053-.204v-.04c0-.22.053-.367.16-.44.06-.04.135-.05.216-.05a.35.35 0 0 1 .04.002zm12.43-9.28c0-1.107.356-2.024 1.07-2.753.71-.73 1.635-1.09 2.775-1.09 1.14 0 2.065.36 2.776 1.09.71.728 1.064 1.645 1.064 2.752 0 1.128-.355 2.054-1.064 2.784-.71.73-1.636 1.097-2.776 1.097-1.14 0-2.065-.366-2.776-1.097-.714-.73-1.07-1.656-1.07-2.784zm1.82 0c0 .668.175 1.21.527 1.624.35.412.81.618 1.374.618.565 0 1.02-.205 1.37-.618.35-.413.525-.956.525-1.624 0-.665-.175-1.205-.526-1.618-.35-.414-.806-.62-1.37-.62-.564 0-1.022.206-1.373.62-.352.413-.527.953-.527 1.618z"/></svg>`
+const ivooxSvg = `<svg width="26" height="26" viewBox="0 0 24 24" fill="var(--pc,#F07800)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>`
+
+const listeningPlatforms = [
+  {
+    id: 'spotify',
+    name: 'Spotify',
+    desc: 'Todos los episodios con reproducción automática',
+    url: 'https://open.spotify.com/show/686Q2N3yZtX36SqEzRbFCB',
+    color: '#1DB954',
+    bg: 'rgba(29,185,84,0.08)',
+    svg: spotifySvg
+  },
+  {
+    id: 'youtube',
+    name: 'YouTube',
+    desc: 'Episodios completos en vídeo HD',
+    url: 'https://www.youtube.com/@Hablandode_to',
+    color: '#FF0000',
+    bg: 'rgba(255,0,0,0.06)',
+    svg: youtubeSvg
+  },
+  {
+    id: 'apple',
+    name: 'Apple Podcasts',
+    desc: 'Disponible en iOS, iPadOS y macOS',
+    url: 'https://anchor.fm/s/fadb0330/podcast/rss',
+    color: '#A855F7',
+    bg: 'rgba(168,85,247,0.07)',
+    svg: appleSvg
+  },
+  {
+    id: 'amazon',
+    name: 'Amazon Music',
+    desc: 'Para suscriptores de Amazon Prime',
+    url: 'https://music.amazon.es/podcasts/469d8a1e-b568-4ea0-b85f-05e331a8e3ec/hablando-de-to',
+    color: '#00A8E1',
+    bg: 'rgba(0,168,225,0.07)',
+    svg: amazonSvg
+  },
+  {
+    id: 'ivoox',
+    name: 'iVoox',
+    desc: 'La plataforma de podcast en español',
+    url: 'https://go.ivoox.com/sq/2734836',
+    color: '#F07800',
+    bg: 'rgba(240,120,0,0.07)',
+    svg: ivooxSvg
+  }
+]
 </script>
 
 <style scoped>
@@ -811,25 +874,112 @@ h1.hero__title {
   color: inherit;
 }
 
-/* ===== PLATFORMS STRIP ===== */
-.platforms-strip {
-  background: var(--color-deep);
-  padding: 1.25rem 0;
+/* ===== PLATFORMS SECTION ===== */
+.platforms-section {
+  background: var(--color-bg);
+  padding: 5rem 0;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.platforms-strip__label {
+.platforms-section__header {
   text-align: center;
-  color: rgba(255,255,255,0.55);
-  font-size: 0.8rem;
-  font-weight: 500;
-  margin-bottom: 0.75rem;
+  margin-bottom: 3rem;
 }
 
-.platforms-strip__list {
+.platforms-section__header h2 {
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: 900;
+  color: var(--color-deep);
+  margin: 0.5rem 0 0.875rem;
+}
+
+.platforms-section__header p {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.platforms-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+
+.platform-card {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 18px;
+  padding: 1.5rem 1.25rem;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.875rem;
+  text-decoration: none;
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.platform-card:hover {
+  border-color: var(--pc);
+  background: var(--pc-bg);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+}
+
+.platform-card__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--pc-bg, rgba(0,0,0,0.05));
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 0.625rem;
-  flex-wrap: wrap;
+  transition: all var(--transition-base);
+}
+
+.platform-card:hover .platform-card__icon {
+  background: var(--pc);
+}
+
+.platform-card:hover .platform-card__icon svg {
+  color: white !important;
+  fill: white !important;
+}
+
+.platform-card__body h4 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-deep);
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.platform-card__body p {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.platform-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--pc);
+  padding: 5px 14px;
+  border-radius: 9999px;
+  border: 1.5px solid var(--pc);
+  transition: all var(--transition-fast);
+  margin-top: auto;
+}
+
+.platform-card:hover .platform-card__cta {
+  background: var(--pc);
+  color: white;
 }
 
 /* ===== SPOTIFY ===== */
@@ -1396,6 +1546,7 @@ h1.hero__title {
   .metrics-grid { grid-template-columns: repeat(2, 1fr); }
   .about-teaser__inner { grid-template-columns: 1fr; }
   .newsletter-box { grid-template-columns: 1fr; gap: 2.5rem; }
+  .platforms-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (max-width: 768px) {
@@ -1404,9 +1555,11 @@ h1.hero__title {
   .metrics-grid { grid-template-columns: repeat(2, 1fr); }
   .hero__actions { flex-direction: column; align-items: flex-start; }
   .hero__authority { gap: 0.35rem; }
+  .platforms-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 480px) {
   .metrics-grid { grid-template-columns: 1fr; }
+  .platforms-grid { grid-template-columns: 1fr; }
 }
 </style>

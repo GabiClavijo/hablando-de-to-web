@@ -12,6 +12,38 @@
       </div>
     </section>
 
+    <!-- Community Banner -->
+    <section class="community-banner">
+      <div class="container">
+        <div class="community-banner__inner">
+          <div class="community-banner__text">
+            <span class="community-banner__label">Una comunidad que sigue creciendo</span>
+            <h2>
+              Más de
+              <span class="community-banner__highlight">{{ communityTotal.toLocaleString('es-ES') }}</span>
+              personas siguen Hablando de TO
+            </h2>
+            <p>Entre suscriptores de YouTube, seguidores de Spotify e Instagram, una comunidad profesional y divulgativa en constante expansión.</p>
+          </div>
+          <div class="community-banner__stats">
+            <div class="cb-stat" v-for="s in communityStats" :key="s.label">
+              <div class="cb-stat__val" :style="{ color: s.color }">
+                {{ ytData?.channel && s.apiKey ? ytData.channel[s.apiKey].toLocaleString('es-ES') : s.fallback }}
+              </div>
+              <div class="cb-stat__icon">{{ s.icon }}</div>
+              <div class="cb-stat__label">{{ s.label }}</div>
+              <div class="cb-stat__platform">{{ s.platform }}</div>
+            </div>
+          </div>
+        </div>
+        <div v-if="ytData" class="api-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+          Datos de YouTube en tiempo real · Actualizado hace {{ fromCache ? '&lt;1h' : 'ahora' }}
+        </div>
+        <div v-else-if="ytLoading" class="api-badge api-badge--loading">Cargando datos reales…</div>
+      </div>
+    </section>
+
     <!-- Summary Cards -->
     <section class="section">
       <div class="container">
@@ -257,10 +289,48 @@
 import { ref, computed } from 'vue'
 import { useEpisodesStore } from '../stores/episodes'
 import { storeToRefs } from 'pinia'
+import { useYouTubeMetrics } from '../composables/useMetrics'
 
 const store = useEpisodesStore()
 const { allEpisodes } = storeToRefs(store)
 const hoverIndex = ref(null)
+
+const { data: ytData, loading: ytLoading, fromCache } = useYouTubeMetrics()
+
+const communityTotal = computed(() => {
+  const ytSubs = ytData.value?.channel?.subscribers || 1240
+  return ytSubs + 890 + 1450
+})
+
+const communityStats = [
+  { icon: '▶️', label: 'Suscriptores', platform: 'YouTube', color: '#FF0000', apiKey: 'subscribers', fallback: '1.240' },
+  { icon: '🎵', label: 'Seguidores', platform: 'Spotify', color: '#1DB954', apiKey: null, fallback: '890' },
+  { icon: '📱', label: 'Seguidores', platform: 'Instagram', color: '#E1306C', apiKey: null, fallback: '1.450' },
+  { icon: '👁', label: 'Visualizaciones totales', platform: 'YouTube', color: '#FF0000', apiKey: 'totalViews', fallback: '48.000' },
+]
+
+const summaryCards = computed(() => [
+  { icon: '🎵', label: 'Reproducciones Spotify (Jun)', value: '18.620', color: '#1DB954', trend: 35 },
+  {
+    icon: '▶️',
+    label: 'Visualizaciones YouTube (total)',
+    value: ytData.value?.channel?.totalViews
+      ? ytData.value.channel.totalViews.toLocaleString('es-ES')
+      : '48.000',
+    color: '#FF0000',
+    trend: 28
+  },
+  { icon: '⏱', label: 'Horas de escucha (mensual)', value: '62 h', color: 'var(--color-primary)', trend: 22 },
+  {
+    icon: '👥',
+    label: 'Suscriptores YouTube',
+    value: ytData.value?.channel?.subscribers
+      ? ytData.value.channel.subscribers.toLocaleString('es-ES')
+      : '1.240',
+    color: '#FF9900',
+    trend: 18
+  },
+])
 
 // SVG dimensions
 const svgW = 700
@@ -334,12 +404,6 @@ const youtubeRanking = computed(() =>
 
 const maxWatchHours = computed(() => Math.max(...youtubeRanking.value.map(e => e.watchHours)))
 
-const summaryCards = [
-  { icon: '🎵', label: 'Reproducciones Spotify (Jun)', value: '18.620', color: '#1DB954', trend: 35 },
-  { icon: '▶️', label: 'Visualizaciones YouTube (total)', value: '48.000', color: '#FF0000', trend: 28 },
-  { icon: '⏱', label: 'Horas de escucha (mensual)', value: '62 h', color: 'var(--color-primary)', trend: 22 },
-  { icon: '👥', label: 'Suscriptores YouTube', value: '1.240', color: '#FF9900', trend: 18 },
-]
 
 const indicators = [
   { icon: '📈', label: 'Crecimiento Spotify', value: '+35%', desc: 'Mayo a Junio 2026', color: '#1DB954' },
@@ -799,10 +863,108 @@ const indicators = [
   background: var(--color-accent-light);
 }
 
+/* ===== COMMUNITY BANNER ===== */
+.community-banner {
+  background: linear-gradient(145deg, var(--color-deep) 0%, #1a3f41 100%);
+  padding: 4rem 0 3rem;
+  color: white;
+}
+
+.community-banner__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.community-banner__label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-accent-light);
+  display: block;
+  margin-bottom: 0.875rem;
+}
+
+.community-banner__text h2 {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 900;
+  color: white;
+  line-height: 1.25;
+  margin-bottom: 1rem;
+}
+
+.community-banner__highlight {
+  color: var(--color-accent-light);
+  font-size: 1.15em;
+}
+
+.community-banner__text p {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.7;
+}
+
+.community-banner__stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.cb-stat {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 1.25rem;
+  text-align: center;
+  transition: background var(--transition-base);
+}
+.cb-stat:hover { background: rgba(255,255,255,0.12); }
+
+.cb-stat__val {
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.cb-stat__icon { font-size: 1.1rem; margin-bottom: 4px; }
+
+.cb-stat__label {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  display: block;
+}
+
+.cb-stat__platform {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+.api-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.4);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.api-badge--loading { color: var(--color-accent-light); border-color: rgba(232,168,56,0.3); }
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .summary-grid { grid-template-columns: repeat(2, 1fr); }
   .indicators-grid { grid-template-columns: repeat(2, 1fr); }
+  .community-banner__inner { grid-template-columns: 1fr; gap: 2.5rem; }
 }
 
 @media (max-width: 768px) {
@@ -811,5 +973,6 @@ const indicators = [
   .rank-row__bar-col { display: none; }
   .indicators-grid { grid-template-columns: 1fr; }
   .watch-time-grid { gap: 0.75rem; }
+  .community-banner__stats { grid-template-columns: repeat(2, 1fr); }
 }
 </style>

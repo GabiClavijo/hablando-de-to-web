@@ -22,7 +22,14 @@
           <div class="about-hero__image">
             <div class="host-card">
               <div class="host-card__avatar">
-                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                <img
+                  v-if="!avatarError"
+                  :src="'/jorge-clavijo.jpg'"
+                  alt="Jorge Clavijo"
+                  class="host-card__photo"
+                  @error="avatarError = true"
+                />
+                <svg v-else width="80" height="80" viewBox="0 0 80 80" fill="none">
                   <circle cx="40" cy="40" r="40" fill="var(--color-primary-light)" opacity="0.2"/>
                   <circle cx="40" cy="30" r="16" fill="var(--color-primary)"/>
                   <path d="M12 74 Q12 56 40 56 Q68 56 68 74" fill="var(--color-primary)"/>
@@ -109,7 +116,14 @@
         <div class="host-bio">
           <div class="host-bio__visual">
             <div class="host-bio__avatar">
-              <svg width="140" height="140" viewBox="0 0 140 140" fill="none">
+              <img
+                v-if="!bioAvatarError"
+                :src="'/jorge-clavijo.jpg'"
+                alt="Jorge Clavijo"
+                class="host-bio__photo"
+                @error="bioAvatarError = true"
+              />
+              <svg v-else width="140" height="140" viewBox="0 0 140 140" fill="none">
                 <circle cx="70" cy="70" r="70" fill="var(--color-bg-alt)"/>
                 <circle cx="70" cy="52" r="26" fill="var(--color-primary)"/>
                 <path d="M20 126 Q20 96 70 96 Q120 96 120 126" fill="var(--color-primary)"/>
@@ -227,6 +241,11 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+
+const avatarError = ref(false)
+const bioAvatarError = ref(false)
+
 const values = [
   {
     icon: '🔬',
@@ -401,6 +420,20 @@ const timeline = [
   align-items: center;
   justify-content: center;
   overflow: hidden;
+}
+
+.host-card__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.host-bio__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
 }
 
 .host-card__info h3 {
