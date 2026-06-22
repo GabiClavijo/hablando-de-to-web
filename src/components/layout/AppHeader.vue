@@ -418,13 +418,19 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 .hamburger.active span:nth-child(2) { opacity: 0; }
 .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Mobile Menu — full-screen overlay */
+/* Mobile Menu — overlay pegado al header
+ * position:absolute en vez de fixed para evitar el bug de backdrop-filter:
+ * en Chrome/Safari, backdrop-filter en un padre convierte el containing block
+ * de sus hijos fixed, haciendo que top/bottom se calculen mal.
+ * Con absolute, top:100% queda justo debajo del header y funciona en todos los navegadores.
+ */
 .mobile-menu {
-  position: fixed;
-  top: 70px;
+  position: absolute;
+  top: 100%;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: calc(100vh - 70px);
+  height: calc(100dvh - 70px);
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
   z-index: 999;
