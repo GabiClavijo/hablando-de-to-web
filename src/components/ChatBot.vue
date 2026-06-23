@@ -271,29 +271,10 @@ async function sendMessage() {
   isTyping.value = true
   await scrollToBottom()
 
-  let botText = null
-
-  // Intentar llamada a Claude API
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: messages.value })
-    })
-    if (res.ok) {
-      const data = await res.json()
-      if (data.text) botText = data.text
-    }
-  } catch { /* sin conexión o API no configurada — usar fallback */ }
-
-  // Fallback a base de patrones local
-  if (!botText) {
-    await new Promise(resolve => setTimeout(resolve, 600 + Math.random() * 400))
-    botText = findResponse(text)
-  }
+  await new Promise(resolve => setTimeout(resolve, 700 + Math.random() * 500))
 
   isTyping.value = false
-  messages.value.push({ from: 'bot', text: botText })
+  messages.value.push({ from: 'bot', text: findResponse(text) })
   await scrollToBottom()
 }
 
