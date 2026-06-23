@@ -670,6 +670,7 @@ h1.hero__title {
   margin-bottom: 0;
   color: white;
   letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 
 .hero__subtitle {

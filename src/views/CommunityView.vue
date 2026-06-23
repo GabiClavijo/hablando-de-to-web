@@ -110,10 +110,10 @@ import { ref } from 'vue'
 const selectedPoll = ref(null)
 const pollSubmitted = ref(false)
 const pollOptions = [
-  { id: 1, label: 'Terapia Ocupacional en oncología', percent: 34 },
-  { id: 2, label: 'TO y tecnología asistiva', percent: 28 },
-  { id: 3, label: 'Práctica basada en la evidencia', percent: 22 },
-  { id: 4, label: 'TO en contexto penitenciario', percent: 16 }
+  { id: 1, label: 'TO en urgencias y cuidados críticos (UCI)', percent: 38 },
+  { id: 2, label: 'TO y perspectiva de género / violencia de género', percent: 27 },
+  { id: 3, label: 'TO en el ámbito rural y zonas despobladas', percent: 21 },
+  { id: 4, label: 'TO y diversidad funcional intelectual', percent: 14 }
 ]
 function submitPoll() { if (selectedPoll.value) pollSubmitted.value = true }
 

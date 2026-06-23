@@ -333,6 +333,16 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   z-index: 200;
 }
 
+/* Puente invisible que mantiene el hover activo al mover el ratón del trigger al menú */
+.nav-dropdown__menu::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
+}
+
 .nav-dropdown:hover .nav-dropdown__menu {
   opacity: 1;
   pointer-events: all;

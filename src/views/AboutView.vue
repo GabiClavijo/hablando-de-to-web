@@ -412,14 +412,16 @@ const timeline = [
 }
 
 .host-card__avatar {
-  width: 100px;
-  height: 100px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   background: rgba(255,255,255,0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  border: 4px solid rgba(255,255,255,0.3);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 
 .host-card__photo {
@@ -562,7 +564,7 @@ const timeline = [
 /* ===== HOST BIO ===== */
 .host-bio {
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: 400px 1fr;
   gap: 4rem;
   align-items: start;
 }
@@ -576,12 +578,12 @@ const timeline = [
 
 .host-bio__avatar {
   position: relative;
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
+  width: 360px;
+  height: 420px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   border: 5px solid var(--color-primary-light);
-  box-shadow: 0 8px 40px rgba(114,148,149,0.25);
+  box-shadow: 0 16px 60px rgba(114,148,149,0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -850,7 +852,7 @@ const timeline = [
   .values-grid { grid-template-columns: repeat(2, 1fr); }
   .host-bio { grid-template-columns: 1fr; }
   .host-bio__visual { flex-direction: row; justify-content: flex-start; align-items: flex-start; }
-  .host-bio__avatar { width: 200px; height: 200px; }
+  .host-bio__avatar { width: 200px; height: 240px; border-radius: var(--radius-md); }
   .audiences-grid { grid-template-columns: repeat(2, 1fr); }
 }
 

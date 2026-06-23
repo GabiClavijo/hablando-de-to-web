@@ -36,6 +36,9 @@
                   <a v-if="guest.social.researchgate" :href="guest.social.researchgate" target="_blank" class="social-link" aria-label="ResearchGate">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.586 0c-.818 0-1.508.19-2.073.565-.563.377-.97.936-1.213 1.68a3.193 3.193 0 0 0-.112.437 8.365 8.365 0 0 0-.078.53 9 9 0 0 0-.05.727c-.01.282-.013.621-.013 1.016a31.121 31.123 0 0 0 .014 1.017 9 9 0 0 0 .05.727 7.946 7.946 0 0 0 .079.53 3.217 3.217 0 0 0 .112.437c.243.743.65 1.302 1.213 1.678.565.376 1.255.564 2.073.564.822 0 1.518-.19 2.09-.572.57-.38.976-.939 1.217-1.677a3.108 3.108 0 0 0 .113-.437 8.428 8.428 0 0 0 .077-.53 8.566 8.566 0 0 0 .048-.727c.012-.282.014-.622.014-1.017 0-.395-.002-.734-.014-1.016a8.566 8.566 0 0 0-.048-.727 8.428 8.428 0 0 0-.077-.53 3.108 3.108 0 0 0-.113-.437c-.241-.738-.647-1.297-1.217-1.68C21.104.19 20.408 0 19.586 0z"/></svg>
                   </a>
+                  <a v-if="guest.social.youtube" :href="guest.social.youtube" target="_blank" class="social-link" aria-label="YouTube">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                  </a>
                 </div>
               </div>
               <p class="guest-bio">{{ guest.bio }}</p>
@@ -51,7 +54,7 @@
                   <li v-for="pub in guest.publications" :key="pub">{{ pub }}</li>
                 </ul>
               </div>
-              <div class="guest-episodes">
+              <div class="guest-episodes" v-if="guest.episodes?.length || guest.social?.youtube">
                 <h4>Episodios</h4>
                 <div class="guest-ep-links">
                   <router-link
@@ -62,6 +65,9 @@
                   >
                     Episodio {{ epId }}
                   </router-link>
+                  <a v-if="guest.fromApi && guest.social?.youtube" :href="guest.social.youtube" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+                    Ver en YouTube
+                  </a>
                 </div>
               </div>
             </div>
@@ -73,8 +79,50 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { guests } from '../data/guests'
-const allGuests = guests
+import { useAllVideos } from '../composables/useAllVideos'
+
+const { videos, fromApi } = useAllVideos()
+
+// Extrae el nombre del invitado del título del vídeo (patrón "Nombre | Tema")
+function extractGuest(title) {
+  const sep = title.indexOf(' | ')
+  if (sep === -1) return null
+  const name = title.substring(0, sep).trim()
+  // Excluir genéricos
+  if (/debate|TO a |mesa/i.test(name)) return null
+  return name
+}
+
+// Construye perfiles básicos desde vídeos de YouTube no cubiertos por datos estáticos
+const apiGuests = computed(() => {
+  if (!fromApi.value || !videos.value.length) return []
+  const staticNames = new Set(guests.map(g => g.name.toLowerCase()))
+  const seen = new Set()
+  const result = []
+  for (const v of videos.value) {
+    const name = extractGuest(v.title)
+    if (!name || seen.has(name.toLowerCase()) || staticNames.has(name.toLowerCase())) continue
+    seen.add(name.toLowerCase())
+    result.push({
+      id: `yt-${v.id}`,
+      name,
+      role: 'Invitado/a — Hablando de TO',
+      specialty: v.title.split(' | ')[1] || 'Terapia Ocupacional',
+      bio: v.description ? v.description.slice(0, 220) + (v.description.length > 220 ? '…' : '') : `Invitado en el episodio "${v.title}".`,
+      image: v.thumbnail || `https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`,
+      episodes: [],
+      publications: [],
+      workArea: 'Ver episodio en YouTube',
+      social: { youtube: v.url },
+      fromApi: true
+    })
+  }
+  return result
+})
+
+const allGuests = computed(() => [...guests, ...apiGuests.value])
 </script>
 
 <style scoped>
