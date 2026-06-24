@@ -19,16 +19,20 @@
           <div class="community-banner__text">
             <span class="community-banner__label">Una comunidad que sigue creciendo</span>
             <h2>
-              Más de
-              <span class="community-banner__highlight">{{ communityTotal.toLocaleString('es-ES') }}</span>
-              personas siguen Hablando de TO
+              <template v-if="communityTotal">
+                Más de
+                <span class="community-banner__highlight">{{ communityTotal.toLocaleString('es-ES') }}</span>
+                personas siguen Hablando de TO
+              </template>
+              <template v-else-if="ytLoading">Cargando datos reales del canal…</template>
+              <template v-else>La comunidad de Hablando de TO sigue creciendo</template>
             </h2>
             <p>Entre suscriptores de YouTube, seguidores de Spotify e Instagram, una comunidad profesional y divulgativa en constante expansión.</p>
           </div>
           <div class="community-banner__stats">
             <div class="cb-stat" v-for="s in communityStats" :key="s.label">
               <div class="cb-stat__val" :style="{ color: s.color }">
-                {{ ytData?.channel && s.apiKey ? ytData.channel[s.apiKey].toLocaleString('es-ES') : s.fallback }}
+                {{ s.apiKey ? (ytLoading ? '…' : fmtNum(ytData?.channel?.[s.apiKey])) : s.static }}
               </div>
               <div class="cb-stat__icon">{{ s.icon }}</div>
               <div class="cb-stat__label">{{ s.label }}</div>
@@ -297,16 +301,25 @@ const hoverIndex = ref(null)
 
 const { data: ytData, loading: ytLoading, fromCache } = useYouTubeMetrics()
 
+
+function fmtNum(n) {
+  if (n == null) return '—'
+  if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0', '') + 'M'
+  if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K'
+  return n.toLocaleString('es-ES')
+}
+
 const communityTotal = computed(() => {
-  const ytSubs = ytData.value?.channel?.subscribers || 1240
+  const ytSubs = ytData.value?.channel?.subscribers
+  if (!ytSubs) return null
   return ytSubs + 890 + 1450
 })
 
 const communityStats = [
-  { icon: '▶️', label: 'Suscriptores', platform: 'YouTube', color: '#FF0000', apiKey: 'subscribers', fallback: '1.240' },
-  { icon: '🎵', label: 'Seguidores', platform: 'Spotify', color: '#1DB954', apiKey: null, fallback: '890' },
-  { icon: '📱', label: 'Seguidores', platform: 'Instagram', color: '#E1306C', apiKey: null, fallback: '1.450' },
-  { icon: '👁', label: 'Visualizaciones totales', platform: 'YouTube', color: '#FF0000', apiKey: 'totalViews', fallback: '48.000' },
+  { icon: '▶️', label: 'Suscriptores', platform: 'YouTube', color: '#FF0000', apiKey: 'subscribers' },
+  { icon: '🎵', label: 'Seguidores', platform: 'Spotify', color: '#1DB954', apiKey: null, static: '890' },
+  { icon: '📱', label: 'Seguidores', platform: 'Instagram', color: '#E1306C', apiKey: null, static: '1.450' },
+  { icon: '👁', label: 'Visualizaciones totales', platform: 'YouTube', color: '#FF0000', apiKey: 'totalViews' },
 ]
 
 const summaryCards = computed(() => [
@@ -314,9 +327,7 @@ const summaryCards = computed(() => [
   {
     icon: '▶️',
     label: 'Visualizaciones YouTube (total)',
-    value: ytData.value?.channel?.totalViews
-      ? ytData.value.channel.totalViews.toLocaleString('es-ES')
-      : '48.000',
+    value: ytLoading.value ? '…' : fmtNum(ytData.value?.channel?.totalViews),
     color: '#FF0000',
     trend: 28
   },
@@ -324,9 +335,7 @@ const summaryCards = computed(() => [
   {
     icon: '👥',
     label: 'Suscriptores YouTube',
-    value: ytData.value?.channel?.subscribers
-      ? ytData.value.channel.subscribers.toLocaleString('es-ES')
-      : '1.240',
+    value: ytLoading.value ? '…' : fmtNum(ytData.value?.channel?.subscribers),
     color: '#FF9900',
     trend: 18
   },

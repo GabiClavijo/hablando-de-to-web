@@ -59,15 +59,15 @@
               </div>
               <div class="channel-card__stats">
                 <div class="ch-stat">
-                  <strong>48K+</strong>
+                  <strong>{{ ytLoading ? '…' : fmtNum(ytData?.channel?.totalViews) }}</strong>
                   <span>Visualizaciones</span>
                 </div>
                 <div class="ch-stat">
-                  <strong>1.2K+</strong>
+                  <strong>{{ ytLoading ? '…' : fmtNum(ytData?.channel?.subscribers) }}</strong>
                   <span>Suscriptores</span>
                 </div>
                 <div class="ch-stat">
-                  <strong>42+</strong>
+                  <strong>{{ ytLoading ? '…' : (ytData?.channel?.videoCount ?? (fromApi ? apiVideos.length : '—')) }}</strong>
                   <span>Vídeos</span>
                 </div>
               </div>
@@ -263,12 +263,21 @@ import { ref, computed } from 'vue'
 import { useEpisodesStore } from '../stores/episodes'
 import { storeToRefs } from 'pinia'
 import { useAllVideos } from '../composables/useAllVideos'
+import { useYouTubeMetrics } from '../composables/useMetrics'
 
 const store = useEpisodesStore()
 const { allEpisodes } = storeToRefs(store)
 const activeFilter = ref('Todos')
 
 const { videos: apiVideos, loading: apiLoading, fromApi } = useAllVideos()
+const { data: ytData, loading: ytLoading } = useYouTubeMetrics()
+
+function fmtNum(n) {
+  if (n == null) return '—'
+  if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0', '') + 'M'
+  if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K'
+  return n.toLocaleString('es-ES')
+}
 
 const filters = ['Todos', 'Más vistos', 'Más recientes']
 
