@@ -412,15 +412,10 @@ const timeline = [
 }
 
 .host-card__avatar {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  height: 280px;
+  border-radius: 16px;
   overflow: hidden;
-  border: 4px solid rgba(255,255,255,0.3);
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 

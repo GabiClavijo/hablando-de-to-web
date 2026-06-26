@@ -293,6 +293,7 @@
 import { ref, computed } from 'vue'
 import { useEpisodesStore } from '../stores/episodes'
 import { storeToRefs } from 'pinia'
+import { useAllVideos } from '../composables/useAllVideos'
 import { useYouTubeMetrics } from '../composables/useMetrics'
 
 const store = useEpisodesStore()
@@ -300,6 +301,7 @@ const { allEpisodes } = storeToRefs(store)
 const hoverIndex = ref(null)
 
 const { data: ytData, loading: ytLoading, fromCache } = useYouTubeMetrics()
+const { videos: apiVideos, fromApi: rankingFromApi } = useAllVideos()
 
 
 function fmtNum(n) {
@@ -309,16 +311,19 @@ function fmtNum(n) {
   return n.toLocaleString('es-ES')
 }
 
+const SPOTIFY_FOLLOWERS = 1429
+const INSTAGRAM_FOLLOWERS = 3130
+
 const communityTotal = computed(() => {
   const ytSubs = ytData.value?.channel?.subscribers
   if (!ytSubs) return null
-  return ytSubs + 890 + 1450
+  return ytSubs + SPOTIFY_FOLLOWERS + INSTAGRAM_FOLLOWERS
 })
 
 const communityStats = [
   { icon: '▶️', label: 'Suscriptores', platform: 'YouTube', color: '#FF0000', apiKey: 'subscribers' },
-  { icon: '🎵', label: 'Seguidores', platform: 'Spotify', color: '#1DB954', apiKey: null, static: '890' },
-  { icon: '📱', label: 'Seguidores', platform: 'Instagram', color: '#E1306C', apiKey: null, static: '1.450' },
+  { icon: '🎵', label: 'Seguidores', platform: 'Spotify', color: '#1DB954', apiKey: null, static: SPOTIFY_FOLLOWERS.toLocaleString('es-ES') },
+  { icon: '📱', label: 'Seguidores', platform: 'Instagram', color: '#E1306C', apiKey: null, static: INSTAGRAM_FOLLOWERS.toLocaleString('es-ES') },
   { icon: '👁', label: 'Visualizaciones totales', platform: 'YouTube', color: '#FF0000', apiKey: 'totalViews' },
 ]
 
@@ -400,16 +405,29 @@ const maxPlays = computed(() => Math.max(...spotifyData.map(d => d.plays)))
 const avgPlays = computed(() => Math.round(spotifyData.reduce((s, d) => s + d.plays, 0) / spotifyData.length))
 const totalPlays = computed(() => spotifyData.reduce((s, d) => s + d.plays, 0))
 
-// YouTube ranking: ordena por views del campo real y calcula horas de watch proporcionales
-const youtubeRanking = computed(() =>
-  [...allEpisodes.value]
+// YouTube ranking: usa datos reales de la API si están disponibles
+const youtubeRanking = computed(() => {
+  const source = rankingFromApi.value && apiVideos.value.length
+    ? apiVideos.value.map(v => {
+        const match = allEpisodes.value.find(ep => ep.youtubeId === v.id)
+        return {
+          id: v.id,
+          number: match?.number ?? '',
+          title: v.title,
+          guest: match?.guest ?? v.title.split(' | ')[0],
+          image: v.thumbnail,
+          category: match?.category ?? '',
+          duration: v.duration,
+          views: v.views || 0,
+        }
+      })
+    : allEpisodes.value.map(ep => ({ ...ep, image: ep.image }))
+
+  return source
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 6)
-    .map(ep => ({
-      ...ep,
-      watchHours: Math.round((ep.views || 0) * 0.061)
-    }))
-)
+    .map(ep => ({ ...ep, watchHours: Math.round((ep.views || 0) * 0.061) }))
+})
 
 const maxWatchHours = computed(() => Math.max(...youtubeRanking.value.map(e => e.watchHours)))
 

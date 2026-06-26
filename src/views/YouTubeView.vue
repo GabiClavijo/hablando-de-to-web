@@ -281,11 +281,30 @@ function fmtNum(n) {
 
 const filters = ['Todos', 'Más vistos', 'Más recientes']
 
-// Top episode always from store (has full metadata: guest, category, summary)
+// Top episode: usa datos reales de la API si están disponibles, si no usa el store
 const topEpisode = computed(() => {
+  if (fromApi.value && apiVideos.value.length) {
+    const sorted = [...apiVideos.value].sort((a, b) => (b.views || 0) - (a.views || 0))
+    const v = sorted[0]
+    if (!v) return null
+    // Enriquecer con metadata del store si coincide el youtubeId
+    const match = allEpisodes.value.find(ep => ep.youtubeId === v.id)
+    return {
+      ...v,
+      image: v.thumbnail,
+      youtubeUrl: v.url,
+      number: match?.number ?? '',
+      guest: match?.guest ?? v.title.split(' | ')[0],
+      summary: match?.summary ?? v.description ?? '',
+      category: match?.category ?? '',
+      tags: match?.tags ?? [],
+      viewsLabel: v.views ? v.views.toLocaleString('es-ES') : '0',
+    }
+  }
+  // Fallback al store
   const sorted = [...allEpisodes.value].sort((a, b) => (b.views || 0) - (a.views || 0))
   const ep = sorted[0]
-  return ep ? { ...ep, viewsLabel: ep.views ? ep.views.toLocaleString('es-ES') : '' } : null
+  return ep ? { ...ep, image: ep.image, youtubeUrl: ep.youtubeUrl, viewsLabel: ep.views ? ep.views.toLocaleString('es-ES') : '' } : null
 })
 
 // All videos display: API data if available, otherwise fallback to store episodes
