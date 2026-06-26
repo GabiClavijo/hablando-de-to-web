@@ -45,13 +45,13 @@
 
         <!-- Results count -->
         <p class="results-count">
-          <strong>{{ store.filteredEpisodes.length }}</strong> episodio{{ store.filteredEpisodes.length !== 1 ? 's' : '' }}
+          <strong>{{ mergedEpisodes.length }}</strong> episodio{{ mergedEpisodes.length !== 1 ? 's' : '' }}
         </p>
 
         <!-- Episodes grid -->
-        <div class="episodes-grid" v-if="store.filteredEpisodes.length">
+        <div class="episodes-grid" v-if="mergedEpisodes.length">
           <router-link
-            v-for="ep in store.filteredEpisodes"
+            v-for="ep in mergedEpisodes"
             :key="ep.id"
             :to="`/podcast/${ep.id}`"
             class="episode-row card"
@@ -86,7 +86,7 @@
           </router-link>
         </div>
 
-        <div v-else class="no-results">
+        <div v-else-if="!mergedEpisodes.length" class="no-results">
           <span>🔍</span>
           <p>No se encontraron episodios con estos filtros.</p>
           <button class="btn btn-outline" @click="clearFilters">Limpiar filtros</button>
@@ -97,10 +97,54 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useEpisodesStore } from '../stores/episodes'
+import { useAllVideos } from '../composables/useAllVideos'
+
 const store = useEpisodesStore()
+const { videos: apiVideos, fromApi } = useAllVideos()
+
+const mergedEpisodes = computed(() => {
+  if (!fromApi.value || !apiVideos.value.length) return store.filteredEpisodes
+
+  const query = store.searchQuery.toLowerCase()
+  const cat = store.activeCategory
+  const fmt = store.activeFormat
+
+  return apiVideos.value
+    .map(v => {
+      const match = store.allEpisodes.find(ep => ep.youtubeId === v.id)
+      return {
+        id: match?.id ?? v.id,
+        number: match?.number ?? '',
+        title: match?.title ?? v.title,
+        guest: match?.guest ?? v.title.split(' | ')[0] ?? '',
+        category: match?.category ?? 'Divulgación',
+        format: match?.format ?? 'Entrevista',
+        date: match?.date ?? v.publishedAt ?? '',
+        duration: match?.duration ?? v.duration ?? '',
+        summary: match?.summary ?? v.description ?? '',
+        tags: match?.tags ?? [],
+        spotifyUrl: match?.spotifyUrl ?? '',
+        youtubeUrl: match?.url ?? v.url ?? '',
+        image: v.thumbnail ?? match?.image ?? '',
+        views: v.views ?? 0,
+        featured: match?.featured ?? false,
+      }
+    })
+    .filter(ep => {
+      const matchesCat = cat === 'Todos' || ep.category === cat
+      const matchesFmt = fmt === 'Todos' || ep.format === fmt
+      const matchesSearch = !query ||
+        ep.title.toLowerCase().includes(query) ||
+        ep.guest.toLowerCase().includes(query)
+      return matchesCat && matchesFmt && matchesSearch
+    })
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+})
 
 function formatDate(d) {
+  if (!d) return ''
   return new Date(d).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 

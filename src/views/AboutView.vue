@@ -423,14 +423,14 @@ const timeline = [
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top center;
+  object-position: center center;
 }
 
 .host-bio__photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top center;
+  object-position: center center;
 }
 
 .host-card__info h3 {
