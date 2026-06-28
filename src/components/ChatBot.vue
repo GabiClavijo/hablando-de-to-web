@@ -108,7 +108,8 @@
 </template>
 
 <script setup>
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, nextTick } from 'vue'
+import { episodesKnowledge } from '@/data/episodesKnowledge.js'
 
 const isOpen = ref(false)
 const isTyping = ref(false)
@@ -132,131 +133,109 @@ const quickChips = [
   { label: '🎙️ ¿Qué es este podcast?', query: 'qué es este podcast' },
   { label: '🦺 ¿Qué es la TO?', query: 'qué es la terapia ocupacional' },
   { label: '🎧 Episodios recomendados', query: 'recomiéndame episodios' },
-  { label: '📊 Métricas del podcast', query: 'métricas' },
   { label: '📍 ¿Dónde escuchar?', query: 'dónde puedo escuchar el podcast' },
   { label: '👤 Sobre Jorge Clavijo', query: 'quién es jorge clavijo' },
 ]
 
-const knowledgeBase = [
+function normalize(str) {
+  return str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+}
+
+function searchEpisodes(query) {
+  const q = normalize(query)
+  const words = q.split(/\s+/).filter(w => w.length > 2)
+  const scored = episodesKnowledge.map(ep => {
+    const hay = normalize(ep.title + ' ' + ep.guest + ' ' + ep.description + ' ' + ep.tags.join(' '))
+    const score = words.reduce((s, w) => {
+      const inTitle = normalize(ep.title + ' ' + ep.guest).includes(w) ? 3 : 0
+      const inDesc = hay.includes(w) ? 1 : 0
+      return s + inTitle + inDesc
+    }, 0)
+    return { ep, score }
+  })
+  return scored
+    .filter(x => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+    .map(x => x.ep)
+}
+
+function formatEpisodeList(eps) {
+  return eps.map(ep =>
+    `• <a href="${ep.url}" target="_blank" style="color:var(--color-primary);font-weight:600;">Ep. #${ep.num}</a> — ${ep.guest || ep.title.split('|')[1]?.trim() || ep.title}`
+  ).join('<br>')
+}
+
+const staticResponses = [
   {
-    patterns: ['qué es este podcast', 'hablando de to', 'de qué trata', 'qué es'],
+    patterns: ['qué es este podcast', 'de qué trata', 'qué es hablando'],
     response: `<strong>Hablando de TO</strong> es un podcast de referencia en Terapia Ocupacional creado y conducido por <strong>Jorge Clavijo</strong>.<br><br>
-               🎙️ Ofrece <strong>entrevistas en profundidad</strong> con profesionales, investigadores, instituciones y personas con experiencia vivida.<br><br>
-               📚 Su objetivo es divulgar, visibilizar y fortalecer la identidad profesional de la TO en el ámbito hispanohablante.<br><br>
-               ¿Quieres que te recomiende por dónde empezar?`
+               🎙️ Entrevistas en profundidad con profesionales, investigadores y personas con experiencia vivida.<br>
+               📚 42 episodios publicados desde septiembre 2024.<br><br>
+               ¿Quieres que te recomiende episodios sobre algún tema?`
   },
   {
-    patterns: ['qué es la terapia ocupacional', 'terapia ocupacional', 'terapeuta ocupacional', 'to es', 'qué hace un to'],
-    response: `La <strong>Terapia Ocupacional (TO)</strong> es una profesión sanitaria que ayuda a las personas a participar en las actividades que son significativas para ellas.<br><br>
-               🏠 <strong>Actividades de la vida diaria</strong>: vestirse, cocinar, trabajar, estudiar...<br>
-               🧠 Trabaja con personas con <strong>dificultades físicas, cognitivas, mentales o sociales</strong>.<br>
-               🌍 Su objetivo es mejorar la <strong>calidad de vida y la autonomía</strong> de las personas.<br><br>
-               En Hablando de TO exploramos todos estos aspectos en profundidad. 🎙️`
+    patterns: ['qué es la terapia ocupacional', 'qué hace un to', 'qué es la to'],
+    response: `La <strong>Terapia Ocupacional (TO)</strong> es una profesión sanitaria que ayuda a las personas a participar en las actividades significativas para ellas.<br><br>
+               🏠 Actividades de la vida diaria: vestirse, cocinar, trabajar...<br>
+               🧠 Trabaja con personas con dificultades físicas, cognitivas o sociales.<br>
+               🌍 Su objetivo: mejorar la autonomía y calidad de vida.<br><br>
+               En este podcast exploramos todos estos ámbitos con profesionales reales. 🎙️`
   },
   {
-    patterns: ['recomiéndame episodios', 'recomiendas', 'por dónde empezar', 'mejor episodio', 'primer episodio'],
-    response: `¡Aquí van mis recomendaciones según tu perfil! 🎯<br><br>
-               🏆 <strong>El más visto:</strong> Ep. 4 — TO en Pediatría (+11.000 views en YouTube)<br>
-               🧠 <strong>Neurología:</strong> Ep. 1 — TO en Daño Cerebral Adquirido<br>
-               🚗 <strong>Geriatría:</strong> Ep. 2 — Conducción y Envejecimiento<br>
-               💚 <strong>Salud mental:</strong> Ep. 3 — Salud Mental y Ocupación<br>
-               🔬 <strong>Investigación:</strong> Ep. 5 — Investigación en TO<br><br>
-               Puedes escucharlos en <a href="https://open.spotify.com/show/686Q2N3yZtX36SqEzRbFCB" target="_blank" style="color: #1DB954; font-weight: 600;">Spotify</a> o verlos en <a href="https://www.youtube.com/@Hablandode_to" target="_blank" style="color: #FF0000; font-weight: 600;">YouTube</a> 🎧`
+    patterns: ['recomiéndame', 'por dónde empezar', 'mejor episodio', 'más visto'],
+    response: () => {
+      const top = [...episodesKnowledge].sort((a, b) => b.views - a.views).slice(0, 4)
+      return `Los episodios más vistos del canal 🏆:<br><br>${formatEpisodeList(top)}<br><br>¿Hay algún tema en concreto que te interese?`
+    }
   },
   {
-    patterns: ['spotify', 'escuchar', 'audio', 'dónde puedo escuchar', 'plataformas'],
-    response: `Puedes escuchar <strong>Hablando de TO</strong> en múltiples plataformas 🎧:<br><br>
-               🟢 <a href="https://open.spotify.com/show/686Q2N3yZtX36SqEzRbFCB?si=6416d9d4e80d4824" target="_blank" style="color: #1DB954; font-weight: 600;">Spotify</a><br>
-               🔴 <a href="https://www.youtube.com/@Hablandode_to" target="_blank" style="color: #FF0000; font-weight: 600;">YouTube</a><br>
-               🔴 Apple Podcasts<br>
-               🟠 iVoox<br>
-               🟡 Amazon Music<br><br>
-               ¡El contenido es 100% gratuito! Sin suscripción ni barreras.`
+    patterns: ['spotify', 'dónde escuchar', 'plataformas', 'dónde puedo escuchar'],
+    response: `Puedes escuchar <strong>Hablando de TO</strong> en 🎧:<br><br>
+               🟢 <a href="https://open.spotify.com/show/686Q2N3yZtX36SqEzRbFCB" target="_blank" style="color:#1DB954;font-weight:600;">Spotify</a><br>
+               🔴 <a href="https://www.youtube.com/@Hablandode_to" target="_blank" style="color:#FF0000;font-weight:600;">YouTube</a><br>
+               🍎 Apple Podcasts · iVoox · Amazon Music<br><br>
+               ¡Gratuito en todas las plataformas!`
   },
   {
-    patterns: ['youtube', 'vídeo', 'video', 'ver', 'canal'],
-    response: `¡Nuestro canal de YouTube es <a href="https://www.youtube.com/@Hablandode_to" target="_blank" style="color: #FF0000; font-weight: 600;">@Hablandode_to</a>! 📺<br><br>
-               Allí encontrarás todos los episodios en formato vídeo.<br><br>
-               📊 <strong>Datos del canal:</strong><br>
-               • +48.000 visualizaciones totales<br>
-               • Episodio más visto: +11.000 views (TO en Pediatría)<br>
-               • 67% de retención media<br><br>
-               ¡Suscríbete para no perderte los próximos episodios! 🔔`
-  },
-  {
-    patterns: ['jorge', 'clavijo', 'quién es', 'conductor', 'presentador', 'creador', 'sobre'],
+    patterns: ['jorge', 'clavijo', 'quién es', 'conductor', 'creador'],
     response: `<strong>Jorge Clavijo</strong> es el creador y conductor de Hablando de TO 🎙️.<br><br>
-               👨‍⚕️ <strong>Terapeuta Ocupacional</strong> e investigador<br>
-               🔬 Formación académica en Ciencias de la Salud<br>
-               📢 Vocación por la <strong>divulgación científica</strong><br>
-               🌍 Comprometido con la <strong>identidad profesional de la TO</strong> en español<br><br>
-               Puedes conocer más sobre él en la sección <a href="/sobre" style="color: var(--color-primary); font-weight: 600;">Sobre el proyecto</a>.`
+               👨‍⚕️ Terapeuta Ocupacional<br>
+               📢 Comprometido con la divulgación y visibilidad de la TO en español<br>
+               🎙️ 42 episodios publicados desde septiembre 2024`
   },
   {
-    patterns: ['métricas', 'datos', 'estadísticas', 'alcance', 'impacto', 'reproducciones'],
-    response: `📊 <strong>Métricas de Hablando de TO</strong> (Junio 2026):<br><br>
-               🟢 <strong>Spotify:</strong> +2.400 reprod/día en pico máximo<br>
-               🔴 <strong>YouTube:</strong> +48.000 visualizaciones totales<br>
-               📈 <strong>Crecimiento:</strong> +35% mensual (May→Jun)<br>
-               ⭐ <strong>Valoración:</strong> 4.9/5 en Spotify<br>
-               🌍 <strong>Audiencia:</strong> 12+ países hispanohablantes<br><br>
-               Puedes ver el dashboard completo en <a href="/metricas" style="color: var(--color-primary); font-weight: 600;">Métricas</a>.`
+    patterns: ['hola', 'buenos días', 'buenas', 'hey', 'saludos'],
+    response: `¡Hola! 👋 Soy el asistente de <strong>Hablando de TO</strong>.<br><br>
+               Puedo ayudarte a encontrar episodios sobre cualquier tema de Terapia Ocupacional. Prueba a preguntarme por un área específica como <em>neurorrehabilitación</em>, <em>salud mental</em>, <em>paliativos</em>...`
   },
   {
-    patterns: ['contacto', 'contactar', 'escribir', 'participar', 'invitado', 'entrevista'],
-    response: `¿Te gustaría participar o colaborar con el podcast? 🤝<br><br>
-               Si eres <strong>profesional, investigador o institución</strong> vinculada a la Terapia Ocupacional, nos encantaría escucharte.<br><br>
-               📩 Visita la sección <a href="/comunidad" style="color: var(--color-primary); font-weight: 600;">Comunidad</a> para ponerte en contacto con el equipo.`
-  },
-  {
-    patterns: ['comunidad', 'unirme', 'newsletter', 'suscribirme'],
-    response: `¡Únete a la comunidad de <strong>Hablando de TO</strong>! 🤝<br><br>
-               📧 <strong>Newsletter:</strong> Recibe los nuevos episodios, recursos y novedades de TO<br>
-               💬 <strong>Participa:</strong> Propón temas, invitados o debates<br>
-               🔔 <strong>Suscríbete</strong> en YouTube y Spotify para no perderte nada<br><br>
-               Visita la sección <a href="/comunidad" style="color: var(--color-primary); font-weight: 600;">Comunidad</a> para más información.`
-  },
-  {
-    patterns: ['salud mental', 'neurología', 'pediatría', 'geriatría', 'investigación', 'daño cerebral'],
-    response: `En Hablando de TO abordamos múltiples especialidades 🏥:<br><br>
-               🧠 <strong>Neurorrehabilitación y DCA</strong> — Ep. 1<br>
-               🚗 <strong>Geriatría y conducción</strong> — Ep. 2<br>
-               💚 <strong>Salud mental</strong> — Ep. 3<br>
-               👶 <strong>Pediatría y neurodesarrollo</strong> — Ep. 4<br>
-               🔬 <strong>Investigación</strong> — Ep. 5<br>
-               👵 <strong>Envejecimiento activo</strong> — Ep. 6<br><br>
-               ¿Cuál te interesa más? Te puedo dar más detalles de cualquier episodio.`
-  },
-  {
-    patterns: ['hola', 'buenos días', 'buenas', 'hey', 'saludos', 'buenas tardes'],
-    response: `¡Hola! 👋 Encantado de saludarte.<br><br>
-               Soy el asistente de <strong>Hablando de TO</strong>, el podcast de referencia en Terapia Ocupacional en español.<br><br>
-               ¿En qué puedo ayudarte hoy? Puedo recomendarte episodios, explicarte qué es la TO o ayudarte a navegar por la web.`
-  },
-  {
-    patterns: ['gracias', 'muchas gracias', 'perfecto', 'genial', 'excelente'],
-    response: `¡De nada! 😊 Es un placer ayudarte.<br><br>
-               Si tienes cualquier otra duda sobre <strong>Hablando de TO</strong> o sobre la Terapia Ocupacional, aquí estaré.<br><br>
-               🎧 ¡Que disfrutes el podcast!`
+    patterns: ['gracias', 'muchas gracias', 'perfecto', 'genial'],
+    response: `¡De nada! 😊 Si quieres explorar más episodios, pregúntame por cualquier tema de Terapia Ocupacional. 🎧`
   },
 ]
 
-const defaultResponse = `No he encontrado información específica sobre eso, pero puedo ayudarte con:<br><br>
-  🎙️ <strong>El podcast:</strong> qué es, formato y contenido<br>
-  🦺 <strong>Terapia Ocupacional:</strong> qué es y cómo funciona<br>
-  🎧 <strong>Episodios:</strong> recomendaciones por tema<br>
-  📍 <strong>Plataformas:</strong> dónde escuchar y ver<br>
-  👤 <strong>Jorge Clavijo:</strong> el conductor del podcast<br><br>
-  ¿Sobre cuál de estos temas te puedo ayudar?`
-
 function findResponse(text) {
-  const lower = text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
-  for (const entry of knowledgeBase) {
-    if (entry.patterns.some(p => lower.includes(p.normalize('NFD').replace(/[̀-ͯ]/g, '')))) {
-      return entry.response
+  const lower = normalize(text)
+
+  // Check static responses first
+  for (const entry of staticResponses) {
+    if (entry.patterns.some(p => lower.includes(normalize(p)))) {
+      return typeof entry.response === 'function' ? entry.response() : entry.response
     }
   }
-  return defaultResponse
+
+  // Search episodes by keyword
+  const results = searchEpisodes(text)
+  if (results.length > 0) {
+    const intro = results.length === 1
+      ? `Encontré este episodio relacionado 🎙️:`
+      : `Encontré ${results.length} episodios relacionados 🎙️:`
+    return `${intro}<br><br>${formatEpisodeList(results)}<br><br>¿Quieres saber más sobre alguno?`
+  }
+
+  return `No encontré episodios sobre ese tema en el podcast.<br><br>
+Prueba a preguntar por temas como: <em>paliativos, neurorrehabilitación, salud mental, MOHO, integración sensorial, TCA, investigación, deporte, prisiones...</em>`
 }
 
 async function sendMessage() {
